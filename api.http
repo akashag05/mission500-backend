@@ -1,0 +1,37 @@
+# GET request to check the status of the app running
+GET http://localhost:5000
+
+
+
+
+# ---------- LOGIN LOGOUT ROTES DEFINED BELOW ----------
+
+# This is the main route for the login logout routes
+###
+GET http://localhost:5000/auth
+# This route is used to signup a new user into the database
+###
+POST http://localhost:5000/auth/signup
+Content-Type: application/json
+
+{
+    "user_id" : 1,
+    "user_name": "karmanshu",
+    "user_email": "karmanshu.swami@revdau.com",
+    "user_password": "QWERTY@123"
+}
+
+
+
+
+# ---------- CONTACT FORM ROTES DEFINED BELOW ----------
+###
+POST http://localhost:5000/contact/
+Content-Type: application/json
+
+{
+    "name" : "fhsdjhfkjdshfk",
+    "email" : "fhsdjhfkjdshfk",
+    "phoneNumber" : "fhsdjhfkjdshfk",
+    "message" : "fhsdjhfkjdshfk"
+}
