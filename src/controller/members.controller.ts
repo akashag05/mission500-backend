@@ -2,8 +2,11 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { db } from "../database/dbConnection";
 import fs from "fs";
+import path from "path";
 import CustomRequest from "../middleware/authentication";
-export const addMember = (req: any, res: Response) => {
+
+// This is the route to add the member and the path to his photo in the database
+export const addMember = (req: Request, res: Response, next: NextFunction) => {
   try {
     console.log("req file -", req.file);
     console.log("req body -", req.body);
@@ -19,7 +22,7 @@ export const addMember = (req: any, res: Response) => {
       });
     } else {
       const fileName = req.file.filename;
-      const filePath = `uploads/team/${fileName}`;
+      const filePath = `uploads/members/${fileName}`;
       const query = "INSERT INTO members (memberName, memberPhoto_path) VALUES (?)";
       const values = [memberName, filePath];
       db.getConnection(function (err, connection) {
@@ -50,10 +53,49 @@ export const addMember = (req: any, res: Response) => {
       });
     }
   } catch (error) {
-    return res.status(500).json({
-      type: false,
-      error: error,
-      message: "Internal Server Error",
-    });
+    next(error)
   }
 };
+
+
+// This route is used to get all the members name, id and photo
+export const getMembers = (req: any, res: Response, next: NextFunction) => {
+  try {
+    const query = "SELECT id, memberName, memberPhoto_path FROM members";
+    db.getConnection(function (err, connection) {
+      if (err) {
+        return res.status(400).json({
+          type: false,
+          error: err,
+          message: "Cannot establish the connection!",
+        });
+      } else {
+        connection.query(query, (err: any, data: any) => {
+          if (err) {
+            // console.log(err);
+            return res.json({
+              type: false,
+              error: err,
+              message: "Cannot get the members details!",
+            });
+          } else {
+            const membersData = data.map((member: any) => {
+              const photoBuffer = fs.readFileSync(member.memberPhoto_path);
+              const photoBase64 = photoBuffer.toString("base64");
+
+              return {
+                id: member.id,
+                memberName: member.memberName,
+                memberPhoto_path: `data:image/png;base64,${photoBase64}`,
+              };
+            });
+            res.json(membersData);
+          }
+        })
+      }
+      connection.release();
+    })
+  } catch (error) {
+    next(error)
+  }
+}

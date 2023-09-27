@@ -3,7 +3,7 @@ import multer from "multer";
 // Multer storage
 const storage = multer.diskStorage({
   destination: (req: any, file: any, cb: any) => {
-    cb(null, "uploads/member");
+    cb(null, "uploads/members");
   },
   filename: (req: any, file: any, cb: any) => {
     const originalname = file.originalname.replace(/\s/g, "_");
