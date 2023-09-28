@@ -7,11 +7,7 @@ import nodemailer from "nodemailer";
 
 
 // This route is used to signup a new user into the database
-export const contactForm = async (
-  req: CustomRequest,
-  res: Response,
-  next: NextFunction
-) => {
+export const contactForm = async (req: CustomRequest, res: Response, next: NextFunction) => {
   try {
     const { name, email, phoneNumber, message } = req.body;
     if (!name || !email || !phoneNumber || !message) {
