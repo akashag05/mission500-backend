@@ -5,13 +5,7 @@ import helmet from "helmet";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
-import {
-  LoginLogoutRoutes,
-  RbacRoutes,
-  contactRoutes,
-  blogRoutes,
-  memberRoutes,
-} from "./src/routes/indexRoutes";
+import { LoginLogoutRoutes, contactRoutes, blogRoutes, memberRoutes, eventsNewsRoutes } from "./src/routes/indexRoutes";
 import { config } from "./src/config/config";
 import ErrorHandler from "./src/middleware/errorHandler";
 
@@ -45,10 +39,10 @@ app.get("/", (req, res) => {
   });
 });
 app.use("/auth", LoginLogoutRoutes);
-app.use("/rbac", RbacRoutes);
 app.use("/contact", contactRoutes);
 app.use("/blog", blogRoutes);
 app.use("/members", memberRoutes);
+app.use("/events", eventsNewsRoutes);
 
 // Calling the global error handler middleware here
 app.use(ErrorHandler);

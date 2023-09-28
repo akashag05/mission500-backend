@@ -6,11 +6,8 @@ import { addBlog } from "../controller/blogs";
 const router = express.Router();
 
 // ALl the routes are defined below
-// Main route to test the working of the login_logout route
+// Main route to test the working of the blog route
 router.post("/", addBlog);
-
-// This route is used to signup a new user into the database
-// router.post("/signup", authentication, signup);
 
 // Exporting the router
 export default router;

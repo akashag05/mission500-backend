@@ -12,6 +12,6 @@ const storage = multer.diskStorage({
 });
 
 // Multer upload instance
-const upload = multer({ storage });
+const memberUpload = multer({ storage });
 
-export default upload;
+export default memberUpload;
