@@ -20,65 +20,68 @@ export const contactForm = async (
         error: "Missing required fields!",
       });
     } else {
-        const transporter = nodemailer.createTransport({
-            service: "gmail", // e.g., Gmail, Yahoo, etc.
-            host: 'smtp.gmail.com',
-            auth: {
-              user: "akash.agarwal@revdau.com",
-              pass: "qwerty1234@@55",
-            },
-          });
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
+        auth: {
+          user: "revDau360@gmail.com",
+          pass: "fenn sekp gqkt nfis",
+        },
+      });
 
-          const mailOptions = {
-            from: "akash.agarwal@revdau.com",
-            to: "karmanshu.swami@revdau.com", // Replace with the recipient's email
-            subject: "New Form Submission",
-            text: `
+      const mailOptions = {
+        from: "revDau360@gmail.com",
+        to: "karmanshu.swami@revdau.com", // Replace with the recipient's email
+        subject: "New Form Submission",
+        text: `
                         Name: ${name}
                         Email: ${email}
                         Phone: ${phoneNumber}
                         Message: ${message}
                       `,
-          };
+      };
 
-          transporter.sendMail(
-            mailOptions,
-            function (error: any, info: any) {
+      transporter.sendMail(
+        mailOptions,
+        function (error: any, info: any) {
+          if (error) {
+            throw new Error()
+          } else {
+            db.getConnection(function (error, connection) {
               if (error) {
-                throw new Error()
+                return res.status(400).json({
+                  type: false,
+                  error: error,
+                  message: "Cannot establish the connection!",
+                });
               } else {
-                db.getConnection(function (error, connection) {
+                const createdAt = Date.now()
+                const insertQuery = `INSERT INTO form_submissions (userName, email, phoneNumber, message) VALUES (?, ?, ?, ?)`;
+                const values = [name, email, phoneNumber, message, createdAt];
+                connection.query(
+                  insertQuery,
+                  values,
+                  async (error: any, data: any) => {
                     if (error) {
                       return res.status(400).json({
                         type: false,
                         error: error,
-                        message: "Cannot establish the connection!",
                       });
                     } else {
-                      const insertQuery = `INSERT INTO form_submissions (name, email, phoneNumber, message) VALUES (?, ?, ?, ?)`;
-                      const values = [name, email, phoneNumber, message];
-                      connection.query(
-                        insertQuery,
-                        values,
-                        async (error: any, data: any) => {
-                          if (error) {
-                            return res.status(400).json({
-                              type: false,
-                              error: error,
-                            });
-                          } else {
-                            return res.json({
-                                type: true,
-                                message: `'Email sent: ' + ${info.response}!`,
-                              });
-                          }
-                        })
-                        connection.release();
+                      return res.json({
+                        type: true,
+                        message: `'Email sent: ' + ${info.response}!`,
+                      });
                     }
-                })
+                  })
+                connection.release();
               }
-            }
-          );
+            })
+          }
+        }
+      );
     }
   } catch (error) {
     next(error);
