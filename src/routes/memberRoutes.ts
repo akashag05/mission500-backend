@@ -14,13 +14,13 @@ router.post("/addMember", memberUpload.single('memberPhoto'), addMember);
 router.get("/getMembers", getMembers);
 
 // This route is used to delete the member's details from the table
-router.get("/deleteMember/:id", deleteMember);
+router.delete("/deleteMember/:id", deleteMember);
 
 // This route is used to update the member's details
 router.put("/updateMember/:id", memberUpload.single('memberPhoto'), updateMember);
 
 // This route is used to get the members details from the database on  the basis of the member id
-router.delete("/getMember/:id", getMemberById);
+router.get("/getMember/:id", getMemberById);
 
 // Exporting the router
 export default router;

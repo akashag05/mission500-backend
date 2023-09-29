@@ -56,22 +56,26 @@ export const contactForm = async (req: CustomRequest, res: Response, next: NextF
                 const createdAt = Date.now()
                 const insertQuery = `INSERT INTO form_submissions (userName, email, phoneNumber, message) VALUES (?, ?, ?, ?)`;
                 const values = [name, email, phoneNumber, message, createdAt];
-                connection.query(
-                  insertQuery,
-                  values,
-                  async (error: any, data: any) => {
-                    if (error) {
-                      return res.status(400).json({
-                        type: false,
-                        error: error,
-                      });
-                    } else {
-                      return res.json({
-                        type: true,
-                        message: `'Email sent: ' + ${info.response}!`,
-                      });
-                    }
-                  })
+                connection.query(insertQuery, values, async (error: any, data: any) => {
+                  if (error) {
+                    return res.status(400).json({
+                      type: false,
+                      error: error,
+                    });
+                  }
+                  if (data) {
+                    // console.log("Data aa gaya db se ---->", data)
+                    return res.status(200).json({
+                      type: true,
+                      message: `'Email sent: ' + ${info.response}!`,
+                    });
+                  } else {
+                    return res.status(500).json({
+                      type: false,
+                      message: "Internal server error!",
+                    });
+                  }
+                })
                 connection.release();
               }
             })
