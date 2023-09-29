@@ -1,6 +1,6 @@
 // Importing all the dependencies here
 import express from "express";
-import { addEventNews, deleteEventNews, getAllEventsNews, getEventsNewsById } from "../controller/enentsNewsController";
+import { addEventNews, deleteEventNews, getAllEventsNews, getEventsNewsById, updateEventNews } from "../controller/enentsNewsController";
 import eventsUpload from "../middleware/eventsUploadFile";
 
 // Calling the router function
@@ -16,8 +16,11 @@ router.post("/addEventNews", eventsUpload.single("memberPhoto"), addEventNews);
 // This route is used to delete the events's details from the table
 router.delete("/deleteEvent/:id", deleteEventNews);
 
-// This route is used to get the members details from the database on  the basis of the member id
-router.get("/getEventsNewsById/:id", getEventsNewsById)
+// This route is used to get the events/news details from the database on the basis of the member id
+router.get("/getEventsNewsById/:id", getEventsNewsById);
+
+// This route is used to update the events or news details
+router.put("/updateEventNews/:id", eventsUpload.single("memberPhoto"), updateEventNews);
 
 // Exporting the router
 export default router;

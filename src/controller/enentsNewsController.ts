@@ -183,3 +183,72 @@ export const getEventsNewsById = (req: Request, res: Response, next: NextFunctio
         next(error)
     }
 };
+
+// This route is used to update the events or news details
+export const updateEventNews = (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const id = req.params.id;
+        const { title, eventNewsType, eventNewsYear, shortDesc, participants, eventNewsLink } = req.body;
+        if (!req.file) {
+            const query = "UPDATE eventsNews SET title=?, eventNewsType=?, eventNewsYear=?, shortDesc=?, participants=?, eventNewsLink=? WHERE id=?";
+            const values = [title, eventNewsType, eventNewsYear, shortDesc, participants, eventNewsLink, id]
+            db.getConnection(function (err, connection) {
+                if (err) {
+                    return res.status(400).json({
+                        type: false,
+                        error: err,
+                        message: "Cannot establish the connection!",
+                    });
+                } else {
+                    connection.query(query, values, (err: any, data: any) => {
+                        if (err) {
+                            return res.status(401).json({
+                                type: false,
+                                error: err,
+                                message: "Cannot update the event or news!",
+                            });
+                        } else {
+                            return res.status(200).json({
+                                type: true,
+                                message: "Event/News has been updated successfully!",
+                            });
+                        }
+                    });
+                }
+                connection.release();
+            });
+        } else {
+            const fileName = req.file.filename;
+            const filePath = `uploads/events/${fileName}`;
+            const query = "UPDATE eventsNews SET title=?, eventNewsType=?, eventNewsYear=?, shortDesc=?, participants=?, imagePath=?, eventNewsLink=? WHERE id=?";
+            const values = [title, eventNewsType, eventNewsYear, shortDesc, participants, filePath, eventNewsLink, id]
+            db.getConnection(function (err, connection) {
+                if (err) {
+                    return res.status(400).json({
+                        type: false,
+                        error: err,
+                        message: "Cannot establish the connection!",
+                    });
+                } else {
+                    connection.query(query, values, (err: any, data: any) => {
+                        if (err) {
+                            return res.status(401).json({
+                                type: false,
+                                error: err,
+                                message: "Cannot update the events/news!",
+                            });
+                        } else {
+                            return res.status(200).json({
+                                type: true,
+                                message: "Events/News has been updated successfully!",
+                            });
+                        }
+                    });
+                }
+                connection.release();
+            });
+        }
+    } catch (error) {
+        next(error)
+    }
+}
