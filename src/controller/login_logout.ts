@@ -69,3 +69,62 @@ export const signup = (req: CustomRequest, res: Response, next: NextFunction) =>
         next(error)
     }
 };
+
+// This route is used to login in to the db
+export const login = (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { user_email, password } = req.body;
+        if (!user_email || !password) {
+            res.status(401).json({
+                type: false,
+                error: "Missing required fields!"
+            })
+        } else {
+            const query = "SELECT user_id, user_name, user_email, user_password FROM users WHERE user_email=?";
+            db.getConnection(function (error, connection) {
+                if (error) {
+                    return res.status(400).json({
+                        type: false,
+                        error: error,
+                        message: "Cannot establish the connection!"
+                    });
+                } else {
+                    connection.query(query, [user_email], async (error: any, data: any) => {
+                        if (error) {
+                            return res.status(400).json({
+                                type: false,
+                                error: error,
+                            })
+                        }
+                        if (data.length) {
+                            const comparePass = await bcrypt.compare(password, data[0].user_password)
+                            if (comparePass) {
+                                res.status(200).json({
+                                    type: true,
+                                    data: {
+                                        user_id: data[0].user_id,
+                                        user_name: data[0].user_name,
+                                        user_email: data[0].user_email
+                                    }
+                                })
+                            } else {
+                                res.status(400).json({
+                                    type: false,
+                                    message: "Wrong credentials!"
+                                })
+                            }
+                        } else {
+                            return res.status(404).json({
+                                type: false,
+                                message: `User not found for the email - ${user_email}!`
+                            })
+                        }
+                    })
+                }
+                connection.release();
+            });
+        }
+    } catch (error) {
+        next(error)
+    }
+}
