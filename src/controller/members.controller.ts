@@ -91,7 +91,7 @@ export const getMembers = (req: any, res: Response, next: NextFunction) => {
         })
       }
       connection.release();
-    })
+    });
   } catch (error) {
     next(error)
   }
