@@ -86,7 +86,10 @@ export const getMembers = (req: any, res: Response, next: NextFunction) => {
                 memberPhoto_path: `data:image/png;base64,${photoBase64}`,
               };
             });
-            res.status(200).json(membersData);
+            return res.status(200).json({
+              type: true,
+              data: membersData
+            });
           }
         })
       }
@@ -231,7 +234,10 @@ export const getMemberById = (req: any, res: Response, next: NextFunction) => {
                 memberPhoto_path: `data:image/png;base64,${photoBase64}`,
               };
             });
-            res.status(200).json(membersData);
+            return res.status(200).json({
+              type: true,
+              data: membersData
+            });
           }
         });
       }
