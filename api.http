@@ -60,7 +60,7 @@ GET http://localhost:5000/members/deleteMember/2
 GET http://localhost:5000/members/getMember/1
 
 ###
-GET http://localhost:5000/events/getYears
+GET http://localhost:5000/events/getYears/events
 
 ###
 GET http://localhost:5000/events/getEventsByYear/2025/events

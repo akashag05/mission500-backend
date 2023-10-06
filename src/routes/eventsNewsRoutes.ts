@@ -23,7 +23,7 @@ router.get("/getEventsNewsById/:id", getEventsNewsById);
 router.put("/updateEventNews/:id", eventsUpload.single("eventImage"), updateEventNews);
 
 // This route is used to get all the years for the years and events
-router.get("/getYears", getYears);
+router.get("/getYears/:eventNewsType", getYears);
 
 // This route is used to get all the events on the basis of years
 router.get("/getEventsByYear/:year/:type", getEventsNewsByYears)

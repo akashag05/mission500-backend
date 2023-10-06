@@ -256,6 +256,7 @@ export const updateEventNews = (req: Request, res: Response, next: NextFunction)
 // This route is used to get all the years for the years and events
 export const getYears = (req: Request, res: Response, next: NextFunction) => {
     try {
+        const eventNewsType = req.params.eventNewsType;
         db.getConnection(function (err, connection) {
             if (err) {
                 return res.status(400).json({
@@ -265,8 +266,8 @@ export const getYears = (req: Request, res: Response, next: NextFunction) => {
                 });
             } else {
                 // const id = req.params.id;
-                const query = "SELECT eventNewsYear FROM eventsNews"
-                connection.query(query, (err: any, data: any) => {
+                const query = "SELECT eventNewsYear FROM eventsNews WHERE eventNewsType=?"
+                connection.query(query, [eventNewsType], (err: any, data: any) => {
                     if (err) {
                         return res.status(400).json({
                             type: false,
@@ -277,7 +278,8 @@ export const getYears = (req: Request, res: Response, next: NextFunction) => {
                         const commonYears = data.map((item: any) => {
                             return item.eventNewsYear
                         });
-                        const uniqueYears = [...new Set(commonYears)];
+                        console.log(commonYears.sort())
+                        const uniqueYears = [...new Set(commonYears.sort())];
                         return res.status(200).json({
                             type: true,
                             data: uniqueYears,
