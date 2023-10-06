@@ -8,8 +8,8 @@ import CustomRequest from "../middleware/authentication";
 // This is the route to add the member and the path to his photo in the database
 export const addMember = (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { memberName } = req.body;
-    if (!req.file || !memberName) {
+    const { memberName, memberProfession } = req.body;
+    if (!req.file || !memberName || !memberProfession) {
       if (req.file) {
         fs.unlinkSync(req.file.path);
       }
@@ -20,8 +20,8 @@ export const addMember = (req: Request, res: Response, next: NextFunction) => {
     } else {
       const fileName = req.file.filename;
       const filePath = `uploads/members/${fileName}`;
-      const query = "INSERT INTO members (memberName, memberPhoto_path) VALUES (?)";
-      const values = [memberName, filePath];
+      const query = "INSERT INTO members (memberName, memberProfession, memberPhoto_path) VALUES (?)";
+      const values = [memberName, memberProfession, filePath];
       db.getConnection(function (err, connection) {
         if (err) {
           return res.status(400).json({
@@ -58,7 +58,7 @@ export const addMember = (req: Request, res: Response, next: NextFunction) => {
 // This route is used to get all the members name, id and photo
 export const getMembers = (req: any, res: Response, next: NextFunction) => {
   try {
-    const query = "SELECT id, memberName, memberPhoto_path FROM members";
+    const query = "SELECT id, memberName, memberProfession, memberPhoto_path FROM members";
     db.getConnection(function (err, connection) {
       if (err) {
         return res.status(400).json({
@@ -83,6 +83,7 @@ export const getMembers = (req: any, res: Response, next: NextFunction) => {
               return {
                 id: member.id,
                 memberName: member.memberName,
+                memberProfession: member.memberProfession,
                 memberPhoto_path: `data:image/png;base64,${photoBase64}`,
               };
             });
@@ -139,9 +140,9 @@ export const deleteMember = (req: any, res: Response, next: NextFunction) => {
 export const updateMember = (req: any, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
-    const { memberName } = req.body;
+    const { memberName, memberProfession } = req.body;
     if (!req.file) {
-      const query = "UPDATE members SET memberName=? WHERE id=?";
+      const query = "UPDATE members SET memberName=?, memberProfession=? WHERE id=?";
       db.getConnection(function (err, connection) {
         if (err) {
           return res.status(400).json({
@@ -150,7 +151,7 @@ export const updateMember = (req: any, res: Response, next: NextFunction) => {
             message: "Cannot establish the connection!",
           });
         } else {
-          connection.query(query, [memberName, id], (err: any, data: any) => {
+          connection.query(query, [memberName, memberProfession, id], (err: any, data: any) => {
             if (err) {
               return res.json({
                 type: false,
@@ -170,7 +171,7 @@ export const updateMember = (req: any, res: Response, next: NextFunction) => {
     } else {
       const fileName = req.file.filename;
       const filePath = `uploads/members/${fileName}`;
-      const query = "UPDATE members SET memberName=?, memberPhoto_path=? WHERE id=?";
+      const query = "UPDATE members SET memberName=?, memberProfession=?, memberPhoto_path=? WHERE id=?";
       db.getConnection(function (err, connection) {
         if (err) {
           return res.status(400).json({
@@ -179,7 +180,7 @@ export const updateMember = (req: any, res: Response, next: NextFunction) => {
             message: "Cannot establish the connection!",
           });
         } else {
-          connection.query(query, [memberName, filePath, id], (err: any, data: any) => {
+          connection.query(query, [memberName, memberProfession, filePath, id], (err: any, data: any) => {
             if (err) {
               return res.json({
                 type: false,
@@ -206,7 +207,7 @@ export const updateMember = (req: any, res: Response, next: NextFunction) => {
 export const getMemberById = (req: any, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
-    const query = "SELECT id, memberName, memberPhoto_path FROM members WHERE id=?";
+    const query = "SELECT id, memberName, memberProfession, memberPhoto_path FROM members WHERE id=?";
     db.getConnection(function (err, connection) {
       if (err) {
         return res.status(400).json({
@@ -231,6 +232,7 @@ export const getMemberById = (req: any, res: Response, next: NextFunction) => {
               return {
                 id: member.id,
                 memberName: member.memberName,
+                memberProfession: member.memberProfession,
                 memberPhoto_path: `data:image/png;base64,${photoBase64}`,
               };
             });
