@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { db } from '../database/dbConnection';
 import CustomRequest from '../middleware/authentication';
 import bcrypt from "bcrypt";
+const SECRET_KEY = "Ng93BjJCiRlcavf01Vn7Qy9ZR9JnBN"
 
 // Defining all the controller routes here
 export const LoginMainRoute = (req: CustomRequest, res: Response, next: NextFunction) => {
@@ -99,16 +100,18 @@ export const login = (req: Request, res: Response, next: NextFunction) => {
                         if (data.length) {
                             const comparePass = await bcrypt.compare(password, data[0].user_password)
                             if (comparePass) {
-                                res.status(200).json({
+                                const token = jwt.sign({
+                                    user_id: data[0].user_id,
+                                    user_name: data[0].user_name,
+                                    user_email: data[0].user_email
+                                }, SECRET_KEY)
+                                // console.log(token);
+                                return res.status(200).json({
                                     type: true,
-                                    data: {
-                                        user_id: data[0].user_id,
-                                        user_name: data[0].user_name,
-                                        user_email: data[0].user_email
-                                    }
+                                    token: token
                                 })
                             } else {
-                                res.status(400).json({
+                                return res.status(400).json({
                                     type: false,
                                     message: "Wrong credentials!"
                                 })

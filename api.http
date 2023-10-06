@@ -23,7 +23,14 @@ Content-Type: application/json
     "user_password": "QWERTY@123"
 }
 
+###
+POST http://localhost:5000/auth/login
+Content-Type: application/json
 
+{
+    "user_email": "karmanshu.swami@revdau.com",
+    "password": "QWERTY@123"
+}
 
 
 # ---------- CONTACT FORM ROTES DEFINED BELOW ----------
