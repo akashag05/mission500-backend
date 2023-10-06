@@ -20,7 +20,7 @@ router.delete("/deleteEvent/:id", deleteEventNews);
 router.get("/getEventsNewsById/:id", getEventsNewsById);
 
 // This route is used to update the events or news details
-router.put("/updateEventNews/:id", eventsUpload.single("memberPhoto"), updateEventNews);
+router.put("/updateEventNews/:id", eventsUpload.single("eventImage"), updateEventNews);
 
 // This route is used to get all the years for the years and events
 router.get("/getYears", getYears);
