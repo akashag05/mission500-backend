@@ -11,7 +11,7 @@ const router = express.Router();
 router.get("/getAllEventsNews", getAllEventsNews);
 
 // This is the route to add the new event or news and the path to its image in the database
-router.post("/addEventNews", eventsUpload.single("memberPhoto"), addEventNews);
+router.post("/addEventNews", eventsUpload.single("eventImage"), addEventNews);
 
 // This route is used to delete the events's details from the table
 router.delete("/deleteEvent/:id", deleteEventNews);
