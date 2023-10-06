@@ -251,4 +251,95 @@ export const updateEventNews = (req: Request, res: Response, next: NextFunction)
     } catch (error) {
         next(error)
     }
-}
+};
+
+// This route is used to get all the years for the years and events
+export const getYears = (req: Request, res: Response, next: NextFunction) => {
+    try {
+        db.getConnection(function (err, connection) {
+            if (err) {
+                return res.status(400).json({
+                    type: false,
+                    error: err,
+                    message: "Cannot establish the connection!",
+                });
+            } else {
+                // const id = req.params.id;
+                const query = "SELECT eventNewsYear FROM eventsNews"
+                connection.query(query, (err: any, data: any) => {
+                    if (err) {
+                        return res.status(400).json({
+                            type: false,
+                            error: err,
+                            message: "Cannot establish the connection!",
+                        });
+                    } else {
+                        const commonYears = data.map((item: any) => {
+                            return item.eventNewsYear
+                        });
+                        const uniqueYears = [...new Set(commonYears)];
+                        return res.status(200).json({
+                            type: true,
+                            data: uniqueYears,
+                        });
+                    }
+                });
+            }
+            connection.release();
+        });
+    } catch (error) {
+        next(error)
+    };
+};
+
+// This route is used to get all the events on the basis of years
+export const getEventsNewsByYears = (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const eventNewsYear = req.params.year;
+        const eventOrNews = req.params.type;
+        const query = "SELECT id, title, eventNewsType, eventNewsYear, shortDesc, participants, imagePath, eventNewsLink FROM eventsNews WHERE eventNewsType=? AND eventNewsYear=?";
+        db.getConnection(function (err, connection) {
+            if (err) {
+                return res.status(400).json({
+                    type: false,
+                    error: err,
+                    message: "Cannot establish the connection!",
+                });
+            } else {
+                connection.query(query, [eventOrNews, eventNewsYear], (err: any, data: any) => {
+                    if (err) {
+                        // console.log(err);
+                        return res.json({
+                            type: false,
+                            error: err,
+                            message: "Cannot get the event's details!",
+                        });
+                    } else {
+                        const eventsNewsData = data.map((events: any) => {
+                            const photoBuffer = fs.readFileSync(events.imagePath);
+                            const photoBase64 = photoBuffer.toString("base64");
+
+                            return {
+                                id: events.id,
+                                title: events.title,
+                                eventNewsType: events.eventNewsType,
+                                eventNewsYear: events.eventNewsYear,
+                                shortDesc: events.shortDesc,
+                                participants: events.participants,
+                                eventNewsLink: events.eventNewsLink,
+                                imagePath: `data:image/png;base64,${photoBase64}`,
+                            };
+                        });
+                        res.status(200).json({
+                            type: true,
+                            data: eventsNewsData
+                        });
+                    }
+                })
+            }
+            connection.release();
+        })
+    } catch (error) {
+        next(error)
+    }
+};

@@ -1,6 +1,6 @@
 // Importing all the dependencies here
 import express from "express";
-import { addEventNews, deleteEventNews, getAllEventsNews, getEventsNewsById, updateEventNews } from "../controller/enentsNewsController";
+import { addEventNews, deleteEventNews, getAllEventsNews, getEventsNewsById, getEventsNewsByYears, getYears, updateEventNews } from "../controller/enentsNewsController";
 import eventsUpload from "../middleware/eventsUploadFile";
 
 // Calling the router function
@@ -21,6 +21,12 @@ router.get("/getEventsNewsById/:id", getEventsNewsById);
 
 // This route is used to update the events or news details
 router.put("/updateEventNews/:id", eventsUpload.single("memberPhoto"), updateEventNews);
+
+// This route is used to get all the years for the years and events
+router.get("/getYears", getYears);
+
+// This route is used to get all the events on the basis of years
+router.get("/getEventsByYear/:year/:type", getEventsNewsByYears)
 
 // Exporting the router
 export default router;
