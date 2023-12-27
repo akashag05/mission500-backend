@@ -186,6 +186,7 @@ export const getEventsNewsById = (req: Request, res: Response, next: NextFunctio
 
 // This route is used to update the events or news details
 export const updateEventNews = (req: Request, res: Response, next: NextFunction) => {
+    console.log("update data", req.body)
     try {
         const id = req.params.id;
         const { title, eventNewsType, eventNewsYear, shortDesc, participants, eventNewsLink } = req.body;
@@ -278,7 +279,7 @@ export const getYears = (req: Request, res: Response, next: NextFunction) => {
                         const commonYears = data.map((item: any) => {
                             return item.eventNewsYear
                         });
-                        console.log(commonYears.sort())
+                        // console.log(commonYears.sort())
                         const uniqueYears = [...new Set(commonYears.sort())];
                         return res.status(200).json({
                             type: true,

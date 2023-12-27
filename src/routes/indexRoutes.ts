@@ -3,3 +3,4 @@ export { default as contactRoutes } from "./contactFormRoutes";
 export { default as blogRoutes } from "./blogRoutes";
 export { default as memberRoutes } from "./memberRoutes";
 export { default as eventsNewsRoutes } from "./eventsNewsRoutes";
+export { default as projectsRoutes } from "./projectsRoutes";

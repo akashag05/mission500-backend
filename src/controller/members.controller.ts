@@ -7,6 +7,9 @@ import CustomRequest from "../middleware/authentication";
 
 // This is the route to add the member and the path to his photo in the database
 export const addMember = (req: Request, res: Response, next: NextFunction) => {
+  console.log(req.file);
+  console.log(req.body);
+  
   try {
     const { memberName, memberProfession } = req.body;
     if (!req.file || !memberName || !memberProfession) {

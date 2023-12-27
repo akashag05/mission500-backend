@@ -5,10 +5,14 @@ import CustomRequest from "../middleware/authentication";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
 
-
 // This route is used to signup a new user into the database
-export const contactForm = async (req: CustomRequest, res: Response, next: NextFunction) => {
+export const contactForm = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
+    // console.log(req.body);
     const { name, email, phoneNumber, message } = req.body;
     if (!name || !email || !phoneNumber || !message) {
       return res.status(401).json({
@@ -18,7 +22,7 @@ export const contactForm = async (req: CustomRequest, res: Response, next: NextF
     } else {
       const transporter = nodemailer.createTransport({
         service: "gmail",
-        host: 'smtp.gmail.com',
+        host: "smtp.gmail.com",
         port: 587,
         secure: false,
         auth: {
@@ -29,7 +33,7 @@ export const contactForm = async (req: CustomRequest, res: Response, next: NextF
 
       const mailOptions = {
         from: "revDau360@gmail.com",
-        to: "karmanshu.swami@revdau.com", // Replace with the recipient's email
+        to: "akash.agarwal@revdau.com", // Replace with the recipient's email
         subject: "New Form Submission",
         text: `
                         Name: ${name}
@@ -39,32 +43,32 @@ export const contactForm = async (req: CustomRequest, res: Response, next: NextF
                       `,
       };
 
-      transporter.sendMail(
-        mailOptions,
-        function (error: any, info: any) {
-          if (error) {
-            throw new Error()
-          } else {
-            db.getConnection(function (error, connection) {
-              if (error) {
-                return res.status(400).json({
-                  type: false,
-                  error: error,
-                  message: "Cannot establish the connection!",
-                });
-              } else {
-                const createdAt = Date.now()
-                const insertQuery = `INSERT INTO form_submissions (userName, email, phoneNumber, message) VALUES (?, ?, ?, ?)`;
-                const values = [name, email, phoneNumber, message, createdAt];
-                connection.query(insertQuery, values, async (error: any, data: any) => {
+      transporter.sendMail(mailOptions, function (error: any, info: any) {
+        if (error) {
+          throw new Error();
+        } else {
+          db.getConnection(function (error, connection) {
+            if (error) {
+              return res.status(400).json({
+                type: false,
+                error: error,
+                message: "Cannot establish the connection!",
+              });
+            } else {
+              const createdAt = Date.now();
+              const insertQuery = `INSERT INTO form_submissions (userName, email, phoneNumber, message) VALUES (?, ?, ?, ?)`;
+              const values = [name, email, phoneNumber, message, createdAt];
+              connection.query(
+                insertQuery,
+                values,
+                async (error: any, data: any) => {
                   if (error) {
                     return res.status(400).json({
                       type: false,
                       error: error,
                     });
-                  }
-                  if (data) {
-                    // console.log("Data aa gaya db se ---->", data)
+                  } else if (data) {
+                    // console.log("Data aa gaya db se ---->", data);
                     return res.status(200).json({
                       type: true,
                       message: `'Email sent: ' + ${info.response}!`,
@@ -75,13 +79,13 @@ export const contactForm = async (req: CustomRequest, res: Response, next: NextF
                       message: "Internal server error!",
                     });
                   }
-                })
-                connection.release();
-              }
-            })
-          }
+                }
+              );
+              connection.release();
+            }
+          });
         }
-      );
+      });
     }
   } catch (error) {
     next(error);
